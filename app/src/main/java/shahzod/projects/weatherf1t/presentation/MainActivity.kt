@@ -1,47 +1,49 @@
 package shahzod.projects.weatherf1t.presentation
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import shahzod.projects.weatherf1t.ui.theme.WeatherF1tTheme
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            _root_ide_package_.shahzod.projects.weatherf1t.presentation.ui.theme.WeatherF1tTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Ruxsat berildi — endi Data qatlamidagi tracker'ni ishga tushirishingiz mumkin
+        } else {
+            Toast.makeText(this, "Ruxsat berilmadi", Toast.LENGTH_SHORT).show()
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    _root_ide_package_.shahzod.projects.weatherf1t.presentation.ui.theme.WeatherF1tTheme {
-        Greeting("Android")
+        checkAndRequestPermission()
+
+        setContent {
+            // UI qismi
+        }
+    }
+
+    private fun checkAndRequestPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+            }
+
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+            }
+        }
     }
 }
