@@ -7,28 +7,50 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
+import shahzod.projects.data.remote.GeocodingApi
 import shahzod.projects.data.remote.WeatherApi
+import shahzod.projects.weatherf1t.BuildConfig
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
     @Provides
     @Singleton
-    fun provideWeatherApi(): WeatherApi {
-        return Retrofit.Builder()
-            .baseUrl("https://api.open-meteo.com/")
-            .addConverterFactory(MoshiConverterFactory.create())
-            .build()
-            .create()
+    fun provideOkHttpClient(): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
+            )
+        }
+        return builder.build()
     }
 
     @Provides
     @Singleton
-    fun provideFusedLocationProviderClient(app: Application): FusedLocationProviderClient {
-        return LocationServices.getFusedLocationProviderClient(app)
-    }
+    fun provideRetrofit(client: OkHttpClient): Retrofit =
+        Retrofit.Builder()
+            .baseUrl("https://api.open-meteo.com/")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideWeatherApi(retrofit: Retrofit): WeatherApi = retrofit.create(WeatherApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideGeocodingApi(retrofit: Retrofit): GeocodingApi = retrofit.create(GeocodingApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideFusedLocationProviderClient(app: Application): FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(app)
 }

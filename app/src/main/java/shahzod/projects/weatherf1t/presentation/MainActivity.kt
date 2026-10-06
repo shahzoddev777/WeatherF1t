@@ -1,48 +1,27 @@
 package shahzod.projects.weatherf1t.presentation
 
-import android.Manifest
-import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
+import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
+import shahzod.projects.presentation.WeatherRoot
+import shahzod.projects.presentation.ui.theme.WeatherF1tTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            // Ruxsat berildi — endi Data qatlamidagi tracker'ni ishga tushirishingiz mumkin
-        } else {
-            Toast.makeText(this, "Ruxsat berilmadi", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        checkAndRequestPermission()
-
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
         setContent {
-            // UI qismi
-        }
-    }
-
-    private fun checkAndRequestPermission() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-            }
-
-            else -> {
-                requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+            WeatherF1tTheme {
+                WeatherRoot()
             }
         }
     }

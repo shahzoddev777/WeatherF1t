@@ -19,6 +19,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Manifest'dagi ${MAPS_API_KEY} uchun (kalit bo'lmasa ham build o'tadi)
+        manifestPlaceholders["MAPS_API_KEY"] = (project.findProperty("MAPS_API_KEY") as String?) ?: ""
     }
 
     buildTypes {
@@ -33,9 +36,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -54,7 +59,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.core.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
@@ -73,8 +77,8 @@ dependencies {
 
     // Retrofit
     implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging.interceptor)
 
     // Voyager
     implementation("cafe.adriel.voyager:voyager-navigator:1.1.0-beta03")
@@ -87,4 +91,7 @@ dependencies {
 
     //MoshiConvertorFactory
     implementation(libs.retrofit.converter.moshi)
+
+    // java.time uchun (data/domain/presentation modullari desugaring talab qiladi)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
