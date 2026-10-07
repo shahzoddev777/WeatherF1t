@@ -9,18 +9,17 @@ plugins {
 
 android {
     namespace = "shahzod.projects.weatherf1t"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "shahzod.projects.weatherf1t"
+        applicationId = "shahzod.projects.weatherf1t.app"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 36
+        versionCode = 4
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Manifest'dagi ${MAPS_API_KEY} uchun (kalit bo'lmasa ham build o'tadi)
         manifestPlaceholders["MAPS_API_KEY"] = (project.findProperty("MAPS_API_KEY") as String?) ?: ""
     }
 
@@ -71,8 +70,9 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.57.1")
     ksp("com.google.dagger:hilt-android-compiler:2.57.1")
 
-    //location
+    //location & maps
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation(libs.play.services.maps)
 
 
     // Retrofit
